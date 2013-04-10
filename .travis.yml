@@ -10,7 +10,7 @@ env:
 
 before_script:
   - cd .. && git clone git://github.com/cakephp/cakephp cakephp && cd cakephp && git checkout $CAKE_VERSION && cd ..
-  - ln -s cakephp-migrations cakephp/app/Plugin/Migration
+  - mkdir cakephp/app/Plugin/Migration && cp -r cakephp-migrations/* cakephp/app/Plugin/Migration
   - chmod -R 777 cakephp/app/tmp
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE migrations_test;'; fi"
   - set +H
