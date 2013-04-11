@@ -77,7 +77,7 @@ before_script:
   - chmod 755 ./Console/cake
 
 script:
-  - sh -c "./Console/cake test Migration AllMigrationsTests --stderr;"
+  - sh -c "./Console/cake test Migrations AllMigrationsTests --stderr;"
 
 notifications:
   irc: "irc.freenode.org#wasabi"
