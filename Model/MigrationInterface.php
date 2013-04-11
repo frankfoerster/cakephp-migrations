@@ -8,8 +8,8 @@
  *
  * @copyright     Copyright 2013, Frank Förster (http://frankfoerster.com)
  * @link          http://github.com/frankfoerster/cakephp-migrations
- * @package       Migration
- * @subpackage    Migration.Model
+ * @package       Migrations
+ * @subpackage    Migrations.Model
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 

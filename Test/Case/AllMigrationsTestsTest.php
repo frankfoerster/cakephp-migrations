@@ -8,12 +8,12 @@
  *
  * @copyright     Copyright 2013, Frank Förster (http://frankfoerster.com)
  * @link          http://github.com/frankfoerster/cakephp-migrations
- * @package       Migration
- * @subpackage    Migration.Test.Case
+ * @package       Migrations
+ * @subpackage    Migrations.Test.Case
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-class AllMigrationTestsTest extends PHPUnit_Framework_TestSuite {
+class AllMigrationsTestsTest extends PHPUnit_Framework_TestSuite {
 
 	public static function suite() {
 		$suite = new CakeTestSuite('All Migration Tests');

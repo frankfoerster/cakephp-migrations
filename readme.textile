@@ -1,4 +1,4 @@
-h1. Migration Plugin for CakePHP 2.3+ !https://travis-ci.org/frankfoerster/cakephp-migrations.png?branch=master!:https://travis-ci.org/frankfoerster/cakephp-migrations
+h1. Migrations Plugin for CakePHP 2.3+ !https://travis-ci.org/frankfoerster/cakephp-migrations.png?branch=master!:https://travis-ci.org/frankfoerster/cakephp-migrations
 
 This migrations plugin is based on the work of "CakeDC/migrations":https://github.com/CakeDC/migrations.
 

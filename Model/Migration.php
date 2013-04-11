@@ -8,17 +8,17 @@
  *
  * @copyright     Copyright 2013, Frank Förster (http://frankfoerster.com)
  * @link          http://github.com/frankfoerster/cakephp-migrations
- * @package       Migration
- * @subpackage    Migration.Model
+ * @package       Migrations
+ * @subpackage    Migrations.Model
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeSchema', 'Model');
-App::uses('ColumnAlreadyExistsException', 'Migration.Model/Exception');
-App::uses('MigrationException', 'Migration.Model/Exception');
-App::uses('MigrationInterface', 'Migration.Model');
-App::uses('MissingColumnException', 'Migration.Model/Exception');
-App::uses('TableAlreadyExistsException', 'Migration.Model/Exception');
+App::uses('ColumnAlreadyExistsException', 'Migrations.Model/Exception');
+App::uses('MigrationException', 'Migrations.Model/Exception');
+App::uses('MigrationInterface', 'Migrations.Model');
+App::uses('MissingColumnException', 'Migrations.Model/Exception');
+App::uses('TableAlreadyExistsException', 'Migrations.Model/Exception');
 
 abstract class Migration extends Object implements MigrationInterface {
 

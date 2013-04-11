@@ -8,13 +8,13 @@
  *
  * @copyright     Copyright 2013, Frank Förster (http://frankfoerster.com)
  * @link          http://github.com/frankfoerster/cakephp-migrations
- * @package       Migration
- * @subpackage    Migration.Test.Case.Model
+ * @package       Migrations
+ * @subpackage    Migrations.Test.Case.Model
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 App::uses('CakeSchema', 'Model');
-App::uses('Migration', 'Migration.Model');
+App::uses('Migration', 'Migrations.Model');
 
 class TestMigration extends Migration {
 
