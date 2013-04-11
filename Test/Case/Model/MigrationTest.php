@@ -260,6 +260,7 @@ class MigrationTest extends CakeTestCase {
  * @expectedException MigrationException
  */
 	public function testRemoveColumnThrowsException3() {
+		$this->skipIf(get_class($this->db) === 'Postgres', __d('migration', 'Skipped on PostgreSQL'));
 		$this->Migration->createTable('tests', array(
 			'id' => array('type' => 'integer', 'null' => false)
 		));
@@ -303,7 +304,7 @@ class MigrationTest extends CakeTestCase {
 /**
  * testChangeColumn method
  */
-	public function testChangeColumn() {
+	public function testChangeColumnStringLength() {
 		$this->Migration->createTable('tests', array(
 			'id' => array('type' => 'integer', 'null' => false),
 			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
@@ -315,16 +316,34 @@ class MigrationTest extends CakeTestCase {
 		));
 		$fields = $this->db->describe('tests');
 		$this->assertEqual(60, $fields['title']['length']);
+	}
 
-		// type string -> text
+/**
+ * testChangeColumnStringToText method
+ */
+	public function testChangeColumnStringToText() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+		));
 		$this->Migration->changeColumn('tests', 'title', array(
 			'type' => 'text',
 		));
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('text', $fields['title']['type']);
-		$this->assertNull($fields['title']['length']);
+		if (get_class($this->db) !== 'Postgres') {
+			$this->assertNull($fields['title']['length']);
+		}
+	}
 
-		// type text -> string
+/**
+ * testChangeColumnTextToString method
+ */
+	public function testChangeColumnTextToString() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'text', 'null' => false)
+		));
 		$this->Migration->changeColumn('tests', 'title', array(
 			'type' => 'string',
 			'length' => 255
@@ -332,8 +351,17 @@ class MigrationTest extends CakeTestCase {
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('string', $fields['title']['type']);
 		$this->assertEqual(255, $fields['title']['length']);
+	}
 
-		// type string -> datetime
+/**
+ * testChangeColumnStringToDatetime method
+ */
+	public function testChangeColumnStringToDatetime() {
+		$this->skipIf(get_class($this->db) === 'Postgres', __d('migration', 'Skipped on PostgreSQL'));
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+		));
 		$this->Migration->changeColumn('tests', 'title', array(
 			'type' => 'datetime',
 			'collate' => 'utf8_unicode', // this should be ignored
@@ -344,34 +372,60 @@ class MigrationTest extends CakeTestCase {
 		$this->assertNull($fields['title']['length']);
 		$this->assertArrayNotHasKey('collate', $fields['title']);
 		$this->assertArrayNotHasKey('charset', $fields['title']);
+	}
 
-		// type datetime -> time
-		$this->Migration->changeColumn('tests', 'title', array(
+/**
+ * testChangeColumnDatetimeToTime method
+ */
+	public function testChangeColumnDatetimeToTime() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'modified' => array('type' => 'datetime', 'null' => false)
+		));
+		$this->Migration->changeColumn('tests', 'modified', array(
 			'type' => 'time',
 			'collate' => 'utf8_unicode', // this should be ignored
 			'charset' => 'utf8' // this should be ignored
 		));
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('time', $fields['title']['type']);
-		$this->assertNull($fields['title']['length']);
-		$this->assertArrayNotHasKey('collate', $fields['title']);
-		$this->assertArrayNotHasKey('charset', $fields['title']);
+		$this->assertEqual('time', $fields['modified']['type']);
+		$this->assertNull($fields['modified']['length']);
+		$this->assertArrayNotHasKey('collate', $fields['modified']);
+		$this->assertArrayNotHasKey('charset', $fields['modified']);
+	}
 
-		// type time -> integer
-		$this->Migration->changeColumn('tests', 'title', array(
+/**
+ * testChangeColumnTimeToInteger method
+ */
+	public function testChangeColumnTimeToInteger() {
+		$this->skipIf(get_class($this->db) === 'Postgres', __d('migration', 'Skipped on PostgreSQL'));
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'modified' => array('type' => 'time', 'null' => false)
+		));
+		$this->Migration->changeColumn('tests', 'modified', array(
 			'type' => 'integer',
 			'length' => 5,
 			'collate' => 'utf8_unicode', // this should be ignored
 			'charset' => 'utf8' // this should be ignored
 		));
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('integer', $fields['title']['type']);
-		$this->assertEqual(5, $fields['title']['length']);
-		$this->assertArrayNotHasKey('collate', $fields['title']);
-		$this->assertArrayNotHasKey('charset', $fields['title']);
+		$this->assertEqual('integer', $fields['modified']['type']);
+		$this->assertEqual(5, $fields['modified']['length']);
+		$this->assertArrayNotHasKey('collate', $fields['modified']);
+		$this->assertArrayNotHasKey('charset', $fields['modified']);
+	}
 
-		// type integer -> boolean
-		$this->Migration->changeColumn('tests', 'title', array(
+/**
+ * testChangeColumnIntegerToBoolean method
+ */
+	public function testChangeColumnIntegerToBoolean() {
+		$this->skipIf(get_class($this->db) === 'Postgres', __d('migration', 'Skipped on PostgreSQL'));
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'active' => array('type' => 'integer', 'null' => false)
+		));
+		$this->Migration->changeColumn('tests', 'active', array(
 			'type' => 'boolean',
 			'length' => 20, // this should be ignored and set to 1
 			'default' => 'foo', // this should be ignored and set to default = null
@@ -379,54 +433,96 @@ class MigrationTest extends CakeTestCase {
 			'charset' => 'utf8' // this should be ignored
 		));
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('boolean', $fields['title']['type']);
-		$this->assertEqual(1, $fields['title']['length']);
-		$this->assertArrayNotHasKey('collate', $fields['title']);
-		$this->assertArrayNotHasKey('charset', $fields['title']);
+		$this->assertEqual('boolean', $fields['active']['type']);
+		$this->assertEqual(1, $fields['active']['length']);
+		$this->assertArrayNotHasKey('collate', $fields['active']);
+		$this->assertArrayNotHasKey('charset', $fields['active']);
+	}
 
-		// type boolean
-		// test default 1 works
-		$this->Migration->changeColumn('tests', 'title', array(
+/**
+ * testChangeColumnBooleanDefaultOne method
+ */
+	public function testChangeColumnBooleanDefaultOne() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'active' => array('type' => 'boolean', 'default' => 0, 'null' => false)
+		));
+		$this->Migration->changeColumn('tests', 'active', array(
 			'type' => 'boolean',
 			'default' => 1,
 		));
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('boolean', $fields['title']['type']);
-		$this->assertEqual(1, $fields['title']['length']);
-		$this->assertEqual(1, $fields['title']['default']);
+		$this->assertEqual('boolean', $fields['active']['type']);
+		if (get_class($this->db) !== 'Postgres') {
+			$this->assertEqual(1, $fields['active']['length']);
+		}
+		$this->assertEqual(1, $fields['active']['default']);
+	}
 
-		// type boolean
-		// test default 0 works
-		$this->Migration->changeColumn('tests', 'title', array(
+/**
+ * testChangeColumnBooleanDefaultZero method
+ */
+	public function testChangeColumnBooleanDefaultZero() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'active' => array('type' => 'boolean', 'default' => 1, 'null' => false)
+		));
+		$this->Migration->changeColumn('tests', 'active', array(
 			'type' => 'boolean',
 			'default' => 0,
 		));
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('boolean', $fields['title']['type']);
-		$this->assertEqual(1, $fields['title']['length']);
-		$this->assertEqual(0, $fields['title']['default']);
+		$this->assertEqual('boolean', $fields['active']['type']);
+		if (get_class($this->db) !== 'Postgres') {
+			$this->assertEqual(1, $fields['active']['length']);
+		}
+		$this->assertEqual(0, $fields['active']['default']);
+	}
 
-		// type boolean
-		// test default null works
-		$this->Migration->changeColumn('tests', 'title', array(
+/**
+ * testChangeColumnBooleanDefaultNull method
+ */
+	public function testChangeColumnBooleanDefaultNull() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'active' => array('type' => 'boolean', 'default' => 1, 'null' => false)
+		));
+		$this->Migration->changeColumn('tests', 'active', array(
 			'type' => 'boolean',
 			'default' => null,
 		));
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('boolean', $fields['title']['type']);
-		$this->assertEqual(1, $fields['title']['length']);
-		$this->assertNull($fields['title']['default']);
+		$this->assertEqual('boolean', $fields['active']['type']);
+		if (get_class($this->db) !== 'Postgres') {
+			$this->assertEqual(1, $fields['active']['length']);
+			$this->assertNull($fields['active']['default']);
+		} else {
+			$this->assertEqual('', $fields['active']['default']);
+		}
+	}
 
-		// type boolean
-		// test default other then 0|1|null gets rewritten to null
-		$this->Migration->changeColumn('tests', 'title', array(
+/**
+ * testChangeColumnBooleanDefaultRewrittenToNull method
+ *
+ * Defaults other than 0|1|null for boolean type should be rewritten to null.
+ */
+	public function testChangeColumnBooleanDefaultRewrittenToNull() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'active' => array('type' => 'boolean', 'default' => 1, 'null' => false)
+		));
+		$this->Migration->changeColumn('tests', 'active', array(
 			'type' => 'boolean',
-			'default' => 'foo again',
+			'default' => 'silly default',
 		));
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('boolean', $fields['title']['type']);
-		$this->assertEqual(1, $fields['title']['length']);
-		$this->assertNull($fields['title']['default']);
+		$this->assertEqual('boolean', $fields['active']['type']);
+		if (get_class($this->db) !== 'Postgres') {
+			$this->assertEqual(1, $fields['active']['length']);
+			$this->assertNull($fields['active']['default']);
+		} else {
+			$this->assertEqual('', $fields['active']['default']);
+		}
 	}
 
 /**
@@ -482,7 +578,7 @@ class MigrationTest extends CakeTestCase {
 			'column' => 'id',
 			'unique' => 1
 		));
-		$indexes = $this->db->index($this->db->fullTableName('tests'));
+		$indexes = $this->db->index('tests');
 		$this->assertArrayHasKey('PRIMARY', $indexes);
 		$this->assertEqual('id', $indexes['PRIMARY']['column']);
 		$this->assertArrayHasKey('unique', $indexes['PRIMARY']);
@@ -588,13 +684,20 @@ class MigrationTest extends CakeTestCase {
 				)
 			)
 		));
-		$oldIndexes = $this->db->index($this->db->fullTableName('tests'));
+		$oldIndexes = $this->db->index('tests');
 
 		$this->Migration->renameIndex('tests', 'TITLE_UNIQUE', 'SUBTITLE_UNIQUE');
-		$newIndexes = $this->db->index($this->db->fullTableName('tests'));
-		$this->assertArrayNotHasKey('TITLE_UNIQUE', $newIndexes);
-		$this->assertArrayHasKey('SUBTITLE_UNIQUE', $newIndexes);
-		$this->assertEqual($oldIndexes['TITLE_UNIQUE'], $newIndexes['SUBTITLE_UNIQUE']);
+		$newIndexes = $this->db->index('tests');
+
+		if (get_class($this->db) !== 'Postgres') {
+			$this->assertArrayNotHasKey('TITLE_UNIQUE', $newIndexes);
+			$this->assertArrayHasKey('SUBTITLE_UNIQUE', $newIndexes);
+			$this->assertEqual($oldIndexes['TITLE_UNIQUE'], $newIndexes['SUBTITLE_UNIQUE']);
+		} else {
+			$this->assertArrayNotHasKey('title_unique', $newIndexes);
+			$this->assertArrayHasKey('subtitle_unique', $newIndexes);
+			$this->assertEqual($oldIndexes['title_unique'], $newIndexes['subtitle_unique']);
+		}
 	}
 
 /**

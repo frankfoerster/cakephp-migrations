@@ -117,7 +117,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		if (in_array($this->_db->fullTableName($newName, false, false), $sources)) {
 			throw new TableAlreadyExistsException(__d('migration', 'Table "%s" already exists in database.', $this->_db->fullTableName($newName, false, false)));
 		}
-		$sql = "ALTER TABLE {$this->_db->fullTableName($table)} RENAME TO {$this->_db->fullTableName($newName)};";
+		$sql = "ALTER TABLE {$table} RENAME TO {$newName};";
 		try {
 			$this->_db->execute($sql);
 		} catch (Exception $e) {
@@ -140,7 +140,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
 			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
 		}
-		$existingColumns = $this->_db->describe($this->_db->fullTableName($table));
+		$existingColumns = $this->_db->describe($table);
 		if (array_key_exists($name, $existingColumns)) {
 			throw new ColumnAlreadyExistsException(__d('migration', 'Column "%s" already exists in table "%s".', array($name, $table)));
 		}
@@ -166,7 +166,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
 			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
 		}
-		$existingColumns = $this->_db->describe($this->_db->fullTableName($table));
+		$existingColumns = $this->_db->describe($table);
 		if (!array_key_exists($name, $existingColumns)) {
 			throw new MissingColumnException(__d('migration', 'Column "%s" does not exist in table "%s".', array($name, $table)));
 		}
@@ -193,7 +193,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
 			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
 		}
-		$existingColumns = $this->_db->describe($this->_db->fullTableName($table));
+		$existingColumns = $this->_db->describe($table);
 		if (!array_key_exists($oldName, $existingColumns)) {
 			throw new MissingColumnException(__d('migration', 'Column "%s" does not exist in table "%s".', array($oldName, $table)));
 		}
@@ -220,7 +220,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
 			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
 		}
-		$existingColumns = $this->_db->describe($this->_db->fullTableName($table));
+		$existingColumns = $this->_db->describe($table);
 		if (!array_key_exists($name, $existingColumns)) {
 			throw new MissingColumnException(__d('migration', 'Column "%s" does not exist in table "%s".', array($name, $table)));
 		}
@@ -247,6 +247,13 @@ abstract class Migration extends Object implements MigrationInterface {
 				$table => array('change' => array($name => $options))
 			)));
 		} catch (Exception $e) {
+			if (
+				get_class($this->_db) === 'Postgres' &&
+				$existingColumns[$name]['type'] !== $options['type'] &&
+				preg_match("/Datatype\smismatch/", $e->getMessage()) === 1
+			) {
+				throw new MigrationException(__d('migration', 'Typecasting from "%s" to "%s" is not supported natively by CakePHP using PostgreSQL. You have to execute a custom sql query instead.', array($existingColumns[$name]['type'], $options['type'])));
+			}
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
 	}
@@ -265,7 +272,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
 			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
 		}
-		$existingIndexes = $this->_db->index($this->_db->fullTableName($table));
+		$existingIndexes = $this->_db->index($table);
 		if (array_key_exists($name, $existingIndexes)) {
 			throw new IndexAlreadyExistsException(__d('migration', 'Index "%s" already exists on table "%s".', array($name, $table)));
 		}
@@ -291,7 +298,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
 			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
 		}
-		$existingIndexes = $this->_db->index($this->_db->fullTableName($table));
+		$existingIndexes = $this->_db->index($table);
 		if (!array_key_exists($name, $existingIndexes)) {
 			throw new MissingIndexException(__d('migration', 'Index "%s" does not exist on table "%s".', array($name, $table)));
 		}
@@ -319,7 +326,11 @@ abstract class Migration extends Object implements MigrationInterface {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
 			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
 		}
-		$existingIndexes = $this->_db->index($this->_db->fullTableName($table));
+		$existingIndexes = $this->_db->index($table);
+		if (get_class($this->_db) === 'Postgres') {
+			$oldName = strtolower($oldName);
+			$newName = strtolower($newName);
+		}
 		if (!array_key_exists($oldName, $existingIndexes)) {
 			throw new MissingIndexException(__d('migration', 'Index "%s" does not exist on table "%s".', array($oldName, $table)));
 		}
