@@ -15,6 +15,7 @@
 
 App::uses('CakeSchema', 'Model');
 App::uses('ColumnAlreadyExistsException', 'Migrations.Model/Exception');
+App::uses('IndexAlreadyExistsException', 'Migrations.Model/Exception');
 App::uses('MigrationException', 'Migrations.Model/Exception');
 App::uses('MigrationInterface', 'Migrations.Model');
 App::uses('MissingColumnException', 'Migrations.Model/Exception');
@@ -249,9 +250,30 @@ abstract class Migration extends Object implements MigrationInterface {
 		}
 	}
 
-	public function addIndex($table) {
+/**
+ * Add an index to an existing table.
+ *
+ * @param string $table
+ * @param string $name
+ * @param array $options
+ * @throws MissingTableException if table does not exist in database
+ * @throws IndexAlreadyExistsException if an index with $name already exists on the table
+ * @throws MigrationException if an sql error occurred
+ */
+	public function addIndex($table, $name, $options) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
 			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
+		}
+		$existingIndexes = $this->_db->index($this->_db->fullTableName($table));
+		if (array_key_exists($name, $existingIndexes)) {
+			throw new IndexAlreadyExistsException(__d('migration', 'Index "%s" already exists on table "%s".', array($name, $table)));
+		}
+		try {
+			$this->_db->execute($this->_db->alterSchema(array(
+				$table => array('add' => array('indexes' => array($name => $options)))
+			)));
+		} catch (Exception $e) {
+			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
 	}
 
@@ -261,7 +283,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		}
 	}
 
-	public function changeTable($table, $fields) {
+	public function renameIndex($table, $oldName, $newName) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
 			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
 		}

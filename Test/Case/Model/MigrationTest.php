@@ -470,4 +470,66 @@ class MigrationTest extends CakeTestCase {
 		));
 	}
 
+/**
+ * testAddIndex method
+ */
+	public function testAddIndex() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+		));
+		$this->Migration->addIndex('tests', 'PRIMARY', array(
+			'column' => 'id',
+			'unique' => 1
+		));
+		$indexes = $this->db->index($this->db->fullTableName('tests'));
+		$this->assertArrayHasKey('PRIMARY', $indexes);
+		$this->assertEqual('id', $indexes['PRIMARY']['column']);
+		$this->assertArrayHasKey('unique', $indexes['PRIMARY']);
+		$this->assertEqual(1, $indexes['PRIMARY']['unique']);
+	}
+
+/**
+ * testAddIndexThrowsException1 method
+ *
+ * @expectedException MissingTableException
+ */
+	public function testAddIndexThrowsException1() {
+		$this->Migration->addIndex('tests', 'TEST_INDEX', array());
+	}
+
+/**
+ * testAddIndexActionThrowsException2 method
+ *
+ * @expectedException IndexAlreadyExistsException
+ */
+	public function testAddIndexActionThrowsException2() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'length' => 255, 'null' => false),
+			'indexes' => array(
+				'PRIMARY' => array(
+					'column' => 'id',
+					'unique' => 1
+				)
+			)
+		));
+		$this->Migration->addIndex('tests', 'PRIMARY', array());
+	}
+
+/**
+ * testAddIndexThrowsException3 method
+ *
+ * @expectedException MigrationException
+ */
+	public function testAddIndexThrowsException3() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+		));
+		$this->Migration->addIndex('tests', 'INVALID_INDEX', array(
+			'column' => 'non_existent_column'
+		));
+	}
+
 }
