@@ -532,4 +532,45 @@ class MigrationTest extends CakeTestCase {
 		));
 	}
 
+/**
+ * testRemoveIndex method
+ */
+	public function testRemoveIndex() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'length' => 255, 'null' => false),
+			'indexes' => array(
+				'PRIMARY' => array(
+					'column' => 'id',
+					'unique' => 1
+				)
+			)
+		));
+		$this->Migration->removeIndex('tests', 'PRIMARY');
+		$indexes = $this->db->index($this->db->fullTableName('tests'));
+		$this->assertArrayNotHasKey('PRIMARY', $indexes);
+	}
+
+/**
+ * testRemoveIndexThrowsException1 method
+ *
+ * @expectedException MissingTableException
+ */
+	public function testRemoveIndexThrowsException1() {
+		$this->Migration->removeIndex('tests', 'PRIMARY');
+	}
+
+/**
+ * testRemoveIndexThrowsException2 method
+ *
+ * @expectedException MissingIndexException
+ */
+	public function testRemoveIndexThrowsException2() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+		));
+		$this->Migration->removeIndex('tests', 'PRIMARY');
+	}
+
 }

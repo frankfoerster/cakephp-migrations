@@ -19,6 +19,7 @@ App::uses('IndexAlreadyExistsException', 'Migrations.Model/Exception');
 App::uses('MigrationException', 'Migrations.Model/Exception');
 App::uses('MigrationInterface', 'Migrations.Model');
 App::uses('MissingColumnException', 'Migrations.Model/Exception');
+App::uses('MissingIndexException', 'Migrations.Model/Exception');
 App::uses('TableAlreadyExistsException', 'Migrations.Model/Exception');
 
 abstract class Migration extends Object implements MigrationInterface {
@@ -277,9 +278,29 @@ abstract class Migration extends Object implements MigrationInterface {
 		}
 	}
 
+/**
+ * Remove an existing index from a table.
+ *
+ * @param string $table
+ * @param string $name
+ * @throws MissingTableException if table does not exist in database
+ * @throws MissingIndexException if the index does not exist on the table
+ * @throws MigrationException if an sql error occurred
+ */
 	public function removeIndex($table, $name) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
 			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
+		}
+		$existingIndexes = $this->_db->index($this->_db->fullTableName($table));
+		if (!array_key_exists($name, $existingIndexes)) {
+			throw new MissingIndexException(__d('migration', 'Index "%s" does not exist on table "%s".', array($name, $table)));
+		}
+		try {
+			$this->_db->execute($this->_db->alterSchema(array(
+				$table => array('drop' => array('indexes' => array($name => array())))
+			)));
+		} catch (Exception $e) {
+			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
 	}
 
