@@ -573,4 +573,74 @@ class MigrationTest extends CakeTestCase {
 		$this->Migration->removeIndex('tests', 'PRIMARY');
 	}
 
+/**
+ * testRenameIndex method
+ */
+	public function testRenameIndex() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'length' => 255, 'null' => false),
+			'subtitle' => array('type' => 'string', 'length' => 255, 'null' => false),
+			'indexes' => array(
+				'TITLE_UNIQUE' => array(
+					'column' => 'title',
+					'unique' => 1
+				)
+			)
+		));
+		$oldIndexes = $this->db->index($this->db->fullTableName('tests'));
+
+		$this->Migration->renameIndex('tests', 'TITLE_UNIQUE', 'SUBTITLE_UNIQUE');
+		$newIndexes = $this->db->index($this->db->fullTableName('tests'));
+		$this->assertArrayNotHasKey('TITLE_UNIQUE', $newIndexes);
+		$this->assertArrayHasKey('SUBTITLE_UNIQUE', $newIndexes);
+		$this->assertEqual($oldIndexes['TITLE_UNIQUE'], $newIndexes['SUBTITLE_UNIQUE']);
+	}
+
+/**
+ * testRenameIndexThrowsException1 method
+ *
+ * @expectedException MissingTableException
+ */
+	public function testRenameIndexThrowsException1() {
+		$this->Migration->renameIndex('tests', 'TITLE_UNIQUE', 'SUPER_TITLE_UNIQUE');
+	}
+
+/**
+ * testRenameIndexThrowsException2 method
+ *
+ * @expectedException MissingIndexException
+ */
+	public function testRenameIndexThrowsException2() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+		));
+		$this->Migration->renameIndex('tests', 'TITLE_UNIQUE', 'SUPER_TITLE_UNIQUE');
+	}
+
+/**
+ * testRenameIndexThrowsException3 method
+ *
+ * @expectedException IndexAlreadyExistsException
+ */
+	public function testRenameIndexThrowsException3() {
+		$this->Migration->createTable('tests', array(
+			'id' => array('type' => 'integer', 'null' => false),
+			'title' => array('type' => 'string', 'length' => 255, 'null' => false),
+			'subtitle' => array('type' => 'string', 'length' => 255, 'null' => false),
+			'indexes' => array(
+				'TITLE_UNIQUE' => array(
+					'column' => 'title',
+					'unique' => 1
+				),
+				'SUBTITLE_UNIQUE' => array(
+					'column' => 'subtitle',
+					'unique' => 1
+				)
+			)
+		));
+		$this->Migration->renameIndex('tests', 'TITLE_UNIQUE', 'SUBTITLE_UNIQUE');
+	}
+
 }

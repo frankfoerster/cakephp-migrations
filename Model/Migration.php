@@ -304,9 +304,37 @@ abstract class Migration extends Object implements MigrationInterface {
 		}
 	}
 
+/**
+ * Rename and existing index.
+ *
+ * @param string $table
+ * @param string $oldName
+ * @param string $newName
+ * @throws MissingTableException if table does not exist in database
+ * @throws MissingIndexException if the $oldName index does not exist on the table
+ * @throws IndexAlreadyExistsException if the $newName index already exists on the table
+ * @throws MigrationException if an sql error occurred
+ */
 	public function renameIndex($table, $oldName, $newName) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
 			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
+		}
+		$existingIndexes = $this->_db->index($this->_db->fullTableName($table));
+		if (!array_key_exists($oldName, $existingIndexes)) {
+			throw new MissingIndexException(__d('migration', 'Index "%s" does not exist on table "%s".', array($oldName, $table)));
+		}
+		if (array_key_exists($newName, $existingIndexes)) {
+			throw new IndexAlreadyExistsException(__d('migration', 'Index "%s" already exists on table "%s".', array($newName, $table)));
+		}
+		try {
+			$this->_db->execute($this->_db->alterSchema(array(
+				$table => array(
+					'drop' => array('indexes' => array($oldName => array())),
+					'add' => array('indexes' => array($newName => $existingIndexes[$oldName]))
+				)
+			)));
+		} catch (Exception $e) {
+			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
 	}
 
