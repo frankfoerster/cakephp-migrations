@@ -31,13 +31,6 @@ before_script:
           'default' => 'public',
           'test' => 'migrations_test',
         )
-      ),
-      'sqlite' => array(
-        'datasource' => 'Database/Sqlite',
-        'database' => array(
-          'default' => ':memory:',
-          'test' => ':memory:',
-        )
       )
     );
     public \$default = array(
