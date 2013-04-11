@@ -312,7 +312,7 @@ abstract class Migration extends Object implements MigrationInterface {
 	}
 
 /**
- * Rename and existing index.
+ * Rename an existing index.
  *
  * @param string $table
  * @param string $oldName
