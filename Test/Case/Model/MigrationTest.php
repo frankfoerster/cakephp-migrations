@@ -88,12 +88,13 @@ class MigrationTest extends CakeTestCase {
  * @expectedException TableAlreadyExistsException
  */
 	public function testCreateTableThrowsException1() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false)
-		));
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false)
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false)
+			))
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false)
+			));
 	}
 
 /**
@@ -133,10 +134,12 @@ class MigrationTest extends CakeTestCase {
  * testRenameTable method
  */
 	public function testRenameTable() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false)
-		));
-		$this->Migration->renameTable('tests', 'modified_tests');
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false)
+			))
+			->renameTable('tests', 'modified_tests');
+
 		$this->assertFalse(in_array('test', $this->db->listSources()));
 		$this->assertTrue(in_array('modified_tests', $this->db->listSources()));
 	}
@@ -156,27 +159,30 @@ class MigrationTest extends CakeTestCase {
  * @expectedException TableAlreadyExistsException
  */
 	public function testRenameTableThrowsException2() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false)
-		));
-		$this->Migration->createTable('modified_tests', array(
-			'id' => array('type' => 'integer', 'null' => false)
-		));
-		$this->Migration->renameTable('tests', 'modified_tests');
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false)
+			))
+			->createTable('modified_tests', array(
+				'id' => array('type' => 'integer', 'null' => false)
+			))
+			->renameTable('tests', 'modified_tests');
 	}
 
 /**
  * testAddColumn method
  */
 	public function testAddColumn() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false)
-		));
-		$this->Migration->addColumn('tests', 'title', array(
-			'type' => 'string',
-			'length' => 255,
-			'null' => false
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false)
+			))
+			->addColumn('tests', 'title', array(
+				'type' => 'string',
+				'length' => 255,
+				'null' => false
+			));
+
 		$this->assertArrayHasKey('title', $this->db->describe('tests'));
 	}
 
@@ -186,9 +192,7 @@ class MigrationTest extends CakeTestCase {
  * @expectedException MissingTableException
  */
 	public function testAddColumnThrowsException1() {
-		$this->Migration->addColumn('tests', 'id', array(
-			'type' => 'integer'
-		));
+		$this->Migration->addColumn('tests', 'id', array('type' => 'integer'));
 	}
 
 /**
@@ -197,12 +201,11 @@ class MigrationTest extends CakeTestCase {
  * @expectedException ColumnAlreadyExistsException
  */
 	public function testAddColumnThrowsException2() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false)
-		));
-		$this->Migration->addColumn('tests', 'id', array(
-			'type' => 'integer'
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false)
+			))
+			->addColumn('tests', 'id', array('type' => 'integer'));
 	}
 
 /**
@@ -211,23 +214,24 @@ class MigrationTest extends CakeTestCase {
  * @expectedException MigrationException
  */
 	public function testAddColumnThrowsException3() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false)
-		));
-		$this->Migration->addColumn('tests', 'title', array(
-			'type' => 'invalid_type'
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false)
+			))
+			->addColumn('tests', 'title', array('type' => 'invalid_type'));
 	}
 
 /**
  * testRemoveColumn method
  */
 	public function testRemoveColumn() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
-		));
-		$this->Migration->removeColumn('tests', 'title');
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+			))
+			->removeColumn('tests', 'title');
+
 		$this->assertArrayNotHasKey('title', $this->db->describe('tests'));
 	}
 
@@ -237,9 +241,7 @@ class MigrationTest extends CakeTestCase {
  * @expectedException MissingTableException
  */
 	public function testRemoveColumnThrowsException1() {
-		$this->Migration->removeColumn('tests', 'id', array(
-			'type' => 'integer'
-		));
+		$this->Migration->removeColumn('tests', 'id');
 	}
 
 /**
@@ -248,10 +250,11 @@ class MigrationTest extends CakeTestCase {
  * @expectedException MissingColumnException
  */
 	public function testRemoveColumnThrowsException2() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false)
-		));
-		$this->Migration->removeColumn('tests', 'title');
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false)
+			))
+			->removeColumn('tests', 'title');
 	}
 
 /**
@@ -261,21 +264,24 @@ class MigrationTest extends CakeTestCase {
  */
 	public function testRemoveColumnThrowsException3() {
 		$this->skipIf(get_class($this->db) === 'Postgres', __d('migration', 'Skipped on PostgreSQL'));
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false)
-		));
-		$this->Migration->removeColumn('tests', 'id');
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false)
+			))
+			->removeColumn('tests', 'id');
 	}
 
 /**
  * testRenameColumn method
  */
 	public function testRenameColumn() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
-		));
-		$this->Migration->renameColumn('tests', 'title', 'modified_title');
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+			))
+			->renameColumn('tests', 'title', 'modified_title');
+
 		$this->assertArrayNotHasKey('title', $this->db->describe('tests'));
 		$this->assertArrayHasKey('modified_title', $this->db->describe('tests'));
 	}
@@ -295,25 +301,24 @@ class MigrationTest extends CakeTestCase {
  * @expectedException MissingColumnException
  */
 	public function testRenameColumnThrowsException2() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false)
-		));
-		$this->Migration->renameColumn('tests', 'foo', 'bar');
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false)
+			))
+			->renameColumn('tests', 'foo', 'bar');
 	}
 
 /**
  * testChangeColumn method
  */
 	public function testChangeColumnStringLength() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+			))
+			->changeColumn('tests', 'title', array('length' => 60)); // string length 255 -> 60
 
-		// string length 255 -> 60
-		$this->Migration->changeColumn('tests', 'title', array(
-			'length' => 60
-		));
 		$fields = $this->db->describe('tests');
 		$this->assertEqual(60, $fields['title']['length']);
 	}
@@ -322,13 +327,13 @@ class MigrationTest extends CakeTestCase {
  * testChangeColumnStringToText method
  */
 	public function testChangeColumnStringToText() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'title', array(
-			'type' => 'text',
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+			))
+			->changeColumn('tests', 'title', array('type' => 'text'));
+
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('text', $fields['title']['type']);
 		if (get_class($this->db) !== 'Postgres') {
@@ -340,14 +345,16 @@ class MigrationTest extends CakeTestCase {
  * testChangeColumnTextToString method
  */
 	public function testChangeColumnTextToString() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'text', 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'title', array(
-			'type' => 'string',
-			'length' => 255
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'text', 'null' => false)
+			))
+			->changeColumn('tests', 'title', array(
+				'type' => 'string',
+				'length' => 255
+			));
+
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('string', $fields['title']['type']);
 		$this->assertEqual(255, $fields['title']['length']);
@@ -358,15 +365,17 @@ class MigrationTest extends CakeTestCase {
  */
 	public function testChangeColumnStringToDatetime() {
 		$this->skipIf(get_class($this->db) === 'Postgres', __d('migration', 'Skipped on PostgreSQL'));
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'title', array(
-			'type' => 'datetime',
-			'collate' => 'utf8_unicode', // this should be ignored
-			'charset' => 'utf8' // this should be ignored
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+			))
+			->changeColumn('tests', 'title', array(
+				'type' => 'datetime',
+				'collate' => 'utf8_unicode', // this should be ignored
+				'charset' => 'utf8' // this should be ignored
+			));
+
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('datetime', $fields['title']['type']);
 		$this->assertNull($fields['title']['length']);
@@ -378,15 +387,17 @@ class MigrationTest extends CakeTestCase {
  * testChangeColumnDatetimeToTime method
  */
 	public function testChangeColumnDatetimeToTime() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'modified' => array('type' => 'datetime', 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'modified', array(
-			'type' => 'time',
-			'collate' => 'utf8_unicode', // this should be ignored
-			'charset' => 'utf8' // this should be ignored
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'modified' => array('type' => 'datetime', 'null' => false)
+			))
+			->changeColumn('tests', 'modified', array(
+				'type' => 'time',
+				'collate' => 'utf8_unicode', // this should be ignored
+				'charset' => 'utf8' // this should be ignored
+			));
+
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('time', $fields['modified']['type']);
 		$this->assertNull($fields['modified']['length']);
@@ -399,16 +410,18 @@ class MigrationTest extends CakeTestCase {
  */
 	public function testChangeColumnTimeToInteger() {
 		$this->skipIf(get_class($this->db) === 'Postgres', __d('migration', 'Skipped on PostgreSQL'));
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'modified' => array('type' => 'time', 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'modified', array(
-			'type' => 'integer',
-			'length' => 5,
-			'collate' => 'utf8_unicode', // this should be ignored
-			'charset' => 'utf8' // this should be ignored
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'modified' => array('type' => 'time', 'null' => false)
+			))
+			->changeColumn('tests', 'modified', array(
+				'type' => 'integer',
+				'length' => 5,
+				'collate' => 'utf8_unicode', // this should be ignored
+				'charset' => 'utf8' // this should be ignored
+			));
+
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('integer', $fields['modified']['type']);
 		$this->assertEqual(5, $fields['modified']['length']);
@@ -421,17 +434,19 @@ class MigrationTest extends CakeTestCase {
  */
 	public function testChangeColumnIntegerToBoolean() {
 		$this->skipIf(get_class($this->db) === 'Postgres', __d('migration', 'Skipped on PostgreSQL'));
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'active' => array('type' => 'integer', 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'active', array(
-			'type' => 'boolean',
-			'length' => 20, // this should be ignored and set to 1
-			'default' => 'foo', // this should be ignored and set to default = null
-			'collate' => 'utf8_unicode', // this should be ignored
-			'charset' => 'utf8' // this should be ignored
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'active' => array('type' => 'integer', 'null' => false)
+			))
+			->changeColumn('tests', 'active', array(
+				'type' => 'boolean',
+				'length' => 20, // this should be ignored and set to 1
+				'default' => 'foo', // this should be ignored and set to default = null
+				'collate' => 'utf8_unicode', // this should be ignored
+				'charset' => 'utf8' // this should be ignored
+			));
+
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('boolean', $fields['active']['type']);
 		$this->assertEqual(1, $fields['active']['length']);
@@ -443,14 +458,16 @@ class MigrationTest extends CakeTestCase {
  * testChangeColumnBooleanDefaultOne method
  */
 	public function testChangeColumnBooleanDefaultOne() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'active' => array('type' => 'boolean', 'default' => 0, 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'active', array(
-			'type' => 'boolean',
-			'default' => 1,
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'active' => array('type' => 'boolean', 'default' => 0, 'null' => false)
+			))
+			->changeColumn('tests', 'active', array(
+				'type' => 'boolean',
+				'default' => 1,
+			));
+
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('boolean', $fields['active']['type']);
 		if (get_class($this->db) !== 'Postgres') {
@@ -463,14 +480,15 @@ class MigrationTest extends CakeTestCase {
  * testChangeColumnBooleanDefaultZero method
  */
 	public function testChangeColumnBooleanDefaultZero() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'active' => array('type' => 'boolean', 'default' => 1, 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'active', array(
-			'type' => 'boolean',
-			'default' => 0,
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'active' => array('type' => 'boolean', 'default' => 1, 'null' => false)
+			))
+			->changeColumn('tests', 'active', array(
+				'type' => 'boolean',
+				'default' => 0,
+			));
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('boolean', $fields['active']['type']);
 		if (get_class($this->db) !== 'Postgres') {
@@ -483,14 +501,16 @@ class MigrationTest extends CakeTestCase {
  * testChangeColumnBooleanDefaultNull method
  */
 	public function testChangeColumnBooleanDefaultNull() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'active' => array('type' => 'boolean', 'default' => 1, 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'active', array(
-			'type' => 'boolean',
-			'default' => null,
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'active' => array('type' => 'boolean', 'default' => 1, 'null' => false)
+			))
+			->changeColumn('tests', 'active', array(
+				'type' => 'boolean',
+				'default' => null,
+			));
+
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('boolean', $fields['active']['type']);
 		if (get_class($this->db) !== 'Postgres') {
@@ -507,14 +527,16 @@ class MigrationTest extends CakeTestCase {
  * Defaults other than 0|1|null for boolean type should be rewritten to null.
  */
 	public function testChangeColumnBooleanDefaultRewrittenToNull() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'active' => array('type' => 'boolean', 'default' => 1, 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'active', array(
-			'type' => 'boolean',
-			'default' => 'silly default',
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'active' => array('type' => 'boolean', 'default' => 1, 'null' => false)
+			))
+			->changeColumn('tests', 'active', array(
+				'type' => 'boolean',
+				'default' => 'silly default',
+			));
+
 		$fields = $this->db->describe('tests');
 		$this->assertEqual('boolean', $fields['active']['type']);
 		if (get_class($this->db) !== 'Postgres') {
@@ -542,13 +564,14 @@ class MigrationTest extends CakeTestCase {
  * @expectedException MissingColumnException
  */
 	public function testChangeColumnThrowsException2() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'non_existent', array(
-			'type' => 'integer'
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+			))
+			->changeColumn('tests', 'non_existent', array(
+				'type' => 'integer'
+			));
 	}
 
 /**
@@ -557,27 +580,30 @@ class MigrationTest extends CakeTestCase {
  * @expectedException MigrationException
  */
 	public function testChangeColumnThrowsException3() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
-		));
-		$this->Migration->changeColumn('tests', 'title', array(
-			'type' => 'invalid_type'
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+			))
+			->changeColumn('tests', 'title', array(
+				'type' => 'invalid_type'
+			));
 	}
 
 /**
  * testAddIndex method
  */
 	public function testAddIndex() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
-		));
-		$this->Migration->addIndex('tests', 'PRIMARY', array(
-			'column' => 'id',
-			'unique' => 1
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+			))
+			->addIndex('tests', 'PRIMARY', array(
+				'column' => 'id',
+				'unique' => 1
+			));
+
 		$indexes = $this->db->index('tests');
 		$this->assertArrayHasKey('PRIMARY', $indexes);
 		$this->assertEqual('id', $indexes['PRIMARY']['column']);
@@ -600,17 +626,18 @@ class MigrationTest extends CakeTestCase {
  * @expectedException IndexAlreadyExistsException
  */
 	public function testAddIndexActionThrowsException2() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false),
-			'indexes' => array(
-				'PRIMARY' => array(
-					'column' => 'id',
-					'unique' => 1
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false),
+				'indexes' => array(
+					'PRIMARY' => array(
+						'column' => 'id',
+						'unique' => 1
+					)
 				)
-			)
-		));
-		$this->Migration->addIndex('tests', 'PRIMARY', array());
+			))
+			->addIndex('tests', 'PRIMARY', array());
 	}
 
 /**
@@ -619,30 +646,33 @@ class MigrationTest extends CakeTestCase {
  * @expectedException MigrationException
  */
 	public function testAddIndexThrowsException3() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
-		));
-		$this->Migration->addIndex('tests', 'INVALID_INDEX', array(
-			'column' => 'non_existent_column'
-		));
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+			))
+			->addIndex('tests', 'INVALID_INDEX', array(
+				'column' => 'non_existent_column'
+			));
 	}
 
 /**
  * testRemoveIndex method
  */
 	public function testRemoveIndex() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false),
-			'indexes' => array(
-				'PRIMARY' => array(
-					'column' => 'id',
-					'unique' => 1
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false),
+				'indexes' => array(
+					'PRIMARY' => array(
+						'column' => 'id',
+						'unique' => 1
+					)
 				)
-			)
-		));
-		$this->Migration->removeIndex('tests', 'PRIMARY');
+			))
+			->removeIndex('tests', 'PRIMARY');
+
 		$indexes = $this->db->index($this->db->fullTableName('tests'));
 		$this->assertArrayNotHasKey('PRIMARY', $indexes);
 	}
@@ -662,11 +692,12 @@ class MigrationTest extends CakeTestCase {
  * @expectedException MissingIndexException
  */
 	public function testRemoveIndexThrowsException2() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
-		));
-		$this->Migration->removeIndex('tests', 'PRIMARY');
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+			))
+			->removeIndex('tests', 'PRIMARY');
 	}
 
 /**
@@ -715,11 +746,12 @@ class MigrationTest extends CakeTestCase {
  * @expectedException MissingIndexException
  */
 	public function testRenameIndexThrowsException2() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false)
-		));
-		$this->Migration->renameIndex('tests', 'TITLE_UNIQUE', 'SUPER_TITLE_UNIQUE');
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false)
+			))
+			->renameIndex('tests', 'TITLE_UNIQUE', 'SUPER_TITLE_UNIQUE');
 	}
 
 /**
@@ -728,22 +760,23 @@ class MigrationTest extends CakeTestCase {
  * @expectedException IndexAlreadyExistsException
  */
 	public function testRenameIndexThrowsException3() {
-		$this->Migration->createTable('tests', array(
-			'id' => array('type' => 'integer', 'null' => false),
-			'title' => array('type' => 'string', 'length' => 255, 'null' => false),
-			'subtitle' => array('type' => 'string', 'length' => 255, 'null' => false),
-			'indexes' => array(
-				'TITLE_UNIQUE' => array(
-					'column' => 'title',
-					'unique' => 1
-				),
-				'SUBTITLE_UNIQUE' => array(
-					'column' => 'subtitle',
-					'unique' => 1
+		$this->Migration
+			->createTable('tests', array(
+				'id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'length' => 255, 'null' => false),
+				'subtitle' => array('type' => 'string', 'length' => 255, 'null' => false),
+				'indexes' => array(
+					'TITLE_UNIQUE' => array(
+						'column' => 'title',
+						'unique' => 1
+					),
+					'SUBTITLE_UNIQUE' => array(
+						'column' => 'subtitle',
+						'unique' => 1
+					)
 				)
-			)
-		));
-		$this->Migration->renameIndex('tests', 'TITLE_UNIQUE', 'SUBTITLE_UNIQUE');
+			))
+			->renameIndex('tests', 'TITLE_UNIQUE', 'SUBTITLE_UNIQUE');
 	}
 
 }

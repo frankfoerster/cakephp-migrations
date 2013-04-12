@@ -66,7 +66,7 @@ abstract class Migration extends Object implements MigrationInterface {
  * @param array $fields
  * @throws TableAlreadyExistsException
  * @throws MigrationException if an sql error occured
- * @return void
+ * @return Migration
  */
 	public function createTable($table, $fields) {
 		if (in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
@@ -78,6 +78,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		} catch (Exception $e) {
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
+		return $this;
 	}
 
 /**
@@ -86,7 +87,7 @@ abstract class Migration extends Object implements MigrationInterface {
  * @param string $table
  * @throws MissingTableException if the table does not exists in the database
  * @throws MigrationException if an sql error occurred
- * @return void
+ * @return Migration
  */
 	public function dropTable($table) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
@@ -98,6 +99,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		} catch (Exception $e) {
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
+		return $this;
 	}
 
 /**
@@ -108,6 +110,7 @@ abstract class Migration extends Object implements MigrationInterface {
  * @throws MissingTableException if the table does not exist in the database
  * @throws TableAlreadyExistsException if a table called $newName already exists in the database
  * @throws MigrationException if an sql error occurred
+ * @return Migration
  */
 	public function renameTable($table, $newName) {
 		$sources = $this->_db->listSources();
@@ -123,6 +126,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		} catch (Exception $e) {
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
+		return $this;
 	}
 
 /**
@@ -134,7 +138,7 @@ abstract class Migration extends Object implements MigrationInterface {
  * @throws MissingTableException if the table does not exist in the database
  * @throws ColumnAlreadyExistsException if the column already exists in the table
  * @throws MigrationException if an sql error occured
- * @return void
+ * @return Migration
  */
 	public function addColumn($table, $name, $options) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
@@ -151,6 +155,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		} catch (Exception $e) {
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
+		return $this;
 	}
 
 /**
@@ -161,6 +166,7 @@ abstract class Migration extends Object implements MigrationInterface {
  * @throws MissingTableException if the table does not exist in the database
  * @throws MissingColumnException if the column does not exist in the table
  * @throws MigrationException if an sql error occurred
+ * @return Migration
  */
 	public function removeColumn($table, $name) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
@@ -177,6 +183,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		} catch (Exception $e) {
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
+		return $this;
 	}
 
 /**
@@ -188,6 +195,7 @@ abstract class Migration extends Object implements MigrationInterface {
  * @throws MissingTableException if the table does not exist in the database
  * @throws MissingColumnException if the column does not exist in the table
  * @throws MigrationException if an sql error occurred
+ * @return Migration
  */
 	public function renameColumn($table, $oldName, $newName) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
@@ -204,6 +212,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		} catch (Exception $e) {
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
+		return $this;
 	}
 
 /**
@@ -215,6 +224,7 @@ abstract class Migration extends Object implements MigrationInterface {
  * @throws MissingTableException if table does not exist in database
  * @throws MissingColumnException if column does not exist in the table
  * @throws MigrationException if an sql error occurred
+ * @return Migration
  */
 	public function changeColumn($table, $name, $options) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
@@ -256,6 +266,7 @@ abstract class Migration extends Object implements MigrationInterface {
 			}
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
+		return $this;
 	}
 
 /**
@@ -267,6 +278,7 @@ abstract class Migration extends Object implements MigrationInterface {
  * @throws MissingTableException if table does not exist in database
  * @throws IndexAlreadyExistsException if an index with $name already exists on the table
  * @throws MigrationException if an sql error occurred
+ * @return Migration
  */
 	public function addIndex($table, $name, $options) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
@@ -283,6 +295,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		} catch (Exception $e) {
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
+		return $this;
 	}
 
 /**
@@ -293,6 +306,7 @@ abstract class Migration extends Object implements MigrationInterface {
  * @throws MissingTableException if table does not exist in database
  * @throws MissingIndexException if the index does not exist on the table
  * @throws MigrationException if an sql error occurred
+ * @return Migration
  */
 	public function removeIndex($table, $name) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
@@ -309,6 +323,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		} catch (Exception $e) {
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
+		return $this;
 	}
 
 /**
@@ -321,6 +336,7 @@ abstract class Migration extends Object implements MigrationInterface {
  * @throws MissingIndexException if the $oldName index does not exist on the table
  * @throws IndexAlreadyExistsException if the $newName index already exists on the table
  * @throws MigrationException if an sql error occurred
+ * @return Migration
  */
 	public function renameIndex($table, $oldName, $newName) {
 		if (!in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources())) {
@@ -347,6 +363,7 @@ abstract class Migration extends Object implements MigrationInterface {
 		} catch (Exception $e) {
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
+		return $this;
 	}
 
 }
