@@ -22,7 +22,7 @@ class MigrationsTest extends CakeTestCase {
 			'Plugin' => array(CakePlugin::path('Migrations') . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 		), APP::RESET);
 
-		$this->connection = 'test_pgsql';
+		$this->connection = 'test';
 		$this->Migrations = new Migrations($this->connection);
 	}
 
