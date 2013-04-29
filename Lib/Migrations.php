@@ -251,7 +251,8 @@ class Migrations {
 			} else {
 				foreach (App::path('Plugin') as $pluginPath) {
 					$folder = new Folder($pluginPath, false);
-					$pluginDirs = $folder->read()[0];
+					$pluginDirs = $folder->read();
+					$pluginDirs = $pluginDirs[0];
 					if (in_array($plugin, $pluginDirs)) {
 						$path = $folder->path . $plugin . DS . 'Config' . DS . 'Migration' . DS;
 						break;
