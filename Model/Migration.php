@@ -51,9 +51,13 @@ abstract class Migration extends Object implements MigrationInterface {
 /**
  * Constructor
  *
+ * @param array $options
  * @return Migration
  */
-	public function __construct() {
+	public function __construct($options = array()) {
+		if (isset($options['connection']) && $options['connection'] != '') {
+			$this->connection = $options['connection'];
+		}
 		$this->_db = ConnectionManager::getDataSource($this->connection);
 		$this->_db->cacheSources = false;
 		$this->_schema = new CakeSchema(array('connection' => $this->connection));
