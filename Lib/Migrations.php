@@ -176,7 +176,8 @@ class Migrations {
 			$availablePlugins = array();
 			foreach ($pluginPaths as $pluginPath) {
 				$folder = new Folder($pluginPath, false);
-				$pluginDirs = $folder->read()[0];
+				$pluginDirs = $folder->read();
+				$pluginDirs = $pluginDirs[0];
 				$availablePlugins = array_merge($availablePlugins, $pluginDirs);
 			}
 			if (!in_array(Inflector::camelize($scope), $availablePlugins)) {
