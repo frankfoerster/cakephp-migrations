@@ -5,10 +5,8 @@ php:
   - 5.4
 
 env:
-  - DB=mysql CAKE_VERSION=2.3.1
-  - DB=mysql CAKE_VERSION=2.3.2
-  - DB=pgsql CAKE_VERSION=2.3.1
-  - DB=pgsql CAKE_VERSION=2.3.2
+  - DB=mysql CAKE_VERSION=2.3.5
+  - DB=pgsql CAKE_VERSION=2.3.5
 
 before_script:
   - cd .. && git clone git://github.com/cakephp/cakephp cakephp && cd cakephp && git checkout $CAKE_VERSION && cd ..
