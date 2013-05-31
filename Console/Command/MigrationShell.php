@@ -84,8 +84,8 @@ class MigrationShell extends AppShell {
 		if (isset($this->params['plugin']) && CakePlugin::loaded($this->params['plugin'])) {
 			$options['scope'] = $this->params['plugin'];
 		}
-		if (isset($this->params['steps'])) {
-			$options['steps'] = (int) $this->params['steps'];
+		if (isset($this->args[1])) {
+			$options['steps'] = (int) $this->args[1];
 		}
 
 		try {
