@@ -1,35 +1,55 @@
 <?php
 /**
- *
- * PHP 5
+ * Copyright (c) Frank Förster (http://frankfoerster.com)
  *
  * Licensed under The MIT License
- * Redistributions of files must retain the below copyright notice.
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2013, Frank Förster (http://frankfoerster.com)
+ * @copyright     Copyright (c) Frank Förster (http://frankfoerster.com)
  * @link          http://github.com/frankfoerster/cakephp-migrations
- * @package       Migrations
- * @subpackage    Migrations.Test.Case.Model
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('CakeSchema', 'Model');
 App::uses('Migration', 'Migrations.Model');
 
+/**
+ * Class TestMigration
+ */
 class TestMigration extends Migration {
 
+	/**
+	 * @var string
+	 */
 	public $connection = 'test';
 
+	/**
+	 * Migrate up
+	 */
 	public function up() {
 	}
 
+	/**
+	 * Migrate down
+	 */
 	public function down() {
 	}
 
+	/**
+	 * Get the configured DataSource/DboSource.
+	 *
+	 * @return DataSource|DboSource
+	 */
 	public function getDb() {
 		return $this->_db;
 	}
 
+	/**
+	 * Get the current Schema instance.
+	 *
+	 * @return CakeSchema
+	 */
 	public function getSchema() {
 		return $this->_schema;
 	}
@@ -140,8 +160,8 @@ class MigrationTest extends CakeTestCase {
 			))
 			->renameTable('tests', 'modified_tests');
 
-		$this->assertFalse(in_array('test', $this->db->listSources()));
-		$this->assertTrue(in_array('modified_tests', $this->db->listSources()));
+		$this->assertFalse(in_array($this->db->fullTableName('tests', false, false), $this->db->listSources()));
+		$this->assertTrue(in_array($this->db->fullTableName('modified_tests', false, false), $this->db->listSources()));
 	}
 
 /**
@@ -320,7 +340,7 @@ class MigrationTest extends CakeTestCase {
 			->changeColumn('tests', 'title', array('length' => 60)); // string length 255 -> 60
 
 		$fields = $this->db->describe('tests');
-		$this->assertEqual(60, $fields['title']['length']);
+		$this->assertEquals(60, $fields['title']['length']);
 	}
 
 /**
@@ -335,7 +355,7 @@ class MigrationTest extends CakeTestCase {
 			->changeColumn('tests', 'title', array('type' => 'text'));
 
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('text', $fields['title']['type']);
+		$this->assertEquals('text', $fields['title']['type']);
 		if (get_class($this->db) !== 'Postgres') {
 			$this->assertNull($fields['title']['length']);
 		}
@@ -356,8 +376,8 @@ class MigrationTest extends CakeTestCase {
 			));
 
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('string', $fields['title']['type']);
-		$this->assertEqual(255, $fields['title']['length']);
+		$this->assertEquals('string', $fields['title']['type']);
+		$this->assertEquals(255, $fields['title']['length']);
 	}
 
 /**
@@ -377,7 +397,7 @@ class MigrationTest extends CakeTestCase {
 			));
 
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('datetime', $fields['title']['type']);
+		$this->assertEquals('datetime', $fields['title']['type']);
 		$this->assertNull($fields['title']['length']);
 		$this->assertArrayNotHasKey('collate', $fields['title']);
 		$this->assertArrayNotHasKey('charset', $fields['title']);
@@ -399,7 +419,7 @@ class MigrationTest extends CakeTestCase {
 			));
 
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('time', $fields['modified']['type']);
+		$this->assertEquals('time', $fields['modified']['type']);
 		$this->assertNull($fields['modified']['length']);
 		$this->assertArrayNotHasKey('collate', $fields['modified']);
 		$this->assertArrayNotHasKey('charset', $fields['modified']);
@@ -423,8 +443,8 @@ class MigrationTest extends CakeTestCase {
 			));
 
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('integer', $fields['modified']['type']);
-		$this->assertEqual(5, $fields['modified']['length']);
+		$this->assertEquals('integer', $fields['modified']['type']);
+		$this->assertEquals(5, $fields['modified']['length']);
 		$this->assertArrayNotHasKey('collate', $fields['modified']);
 		$this->assertArrayNotHasKey('charset', $fields['modified']);
 	}
@@ -448,8 +468,8 @@ class MigrationTest extends CakeTestCase {
 			));
 
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('boolean', $fields['active']['type']);
-		$this->assertEqual(1, $fields['active']['length']);
+		$this->assertEquals('boolean', $fields['active']['type']);
+		$this->assertEquals(1, $fields['active']['length']);
 		$this->assertArrayNotHasKey('collate', $fields['active']);
 		$this->assertArrayNotHasKey('charset', $fields['active']);
 	}
@@ -469,11 +489,11 @@ class MigrationTest extends CakeTestCase {
 			));
 
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('boolean', $fields['active']['type']);
+		$this->assertEquals('boolean', $fields['active']['type']);
 		if (get_class($this->db) !== 'Postgres') {
-			$this->assertEqual(1, $fields['active']['length']);
+			$this->assertEquals(1, $fields['active']['length']);
 		}
-		$this->assertEqual(1, $fields['active']['default']);
+		$this->assertEquals(1, $fields['active']['default']);
 	}
 
 /**
@@ -490,11 +510,11 @@ class MigrationTest extends CakeTestCase {
 				'default' => 0,
 			));
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('boolean', $fields['active']['type']);
+		$this->assertEquals('boolean', $fields['active']['type']);
 		if (get_class($this->db) !== 'Postgres') {
-			$this->assertEqual(1, $fields['active']['length']);
+			$this->assertEquals(1, $fields['active']['length']);
 		}
-		$this->assertEqual(0, $fields['active']['default']);
+		$this->assertEquals(0, $fields['active']['default']);
 	}
 
 /**
@@ -512,12 +532,12 @@ class MigrationTest extends CakeTestCase {
 			));
 
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('boolean', $fields['active']['type']);
+		$this->assertEquals('boolean', $fields['active']['type']);
 		if (get_class($this->db) !== 'Postgres') {
-			$this->assertEqual(1, $fields['active']['length']);
+			$this->assertEquals(1, $fields['active']['length']);
 			$this->assertNull($fields['active']['default']);
 		} else {
-			$this->assertEqual('', $fields['active']['default']);
+			$this->assertEquals('', $fields['active']['default']);
 		}
 	}
 
@@ -538,12 +558,12 @@ class MigrationTest extends CakeTestCase {
 			));
 
 		$fields = $this->db->describe('tests');
-		$this->assertEqual('boolean', $fields['active']['type']);
+		$this->assertEquals('boolean', $fields['active']['type']);
 		if (get_class($this->db) !== 'Postgres') {
-			$this->assertEqual(1, $fields['active']['length']);
+			$this->assertEquals(1, $fields['active']['length']);
 			$this->assertNull($fields['active']['default']);
 		} else {
-			$this->assertEqual('', $fields['active']['default']);
+			$this->assertEquals('', $fields['active']['default']);
 		}
 	}
 
@@ -606,9 +626,9 @@ class MigrationTest extends CakeTestCase {
 
 		$indexes = $this->db->index('tests');
 		$this->assertArrayHasKey('PRIMARY', $indexes);
-		$this->assertEqual('id', $indexes['PRIMARY']['column']);
+		$this->assertEquals('id', $indexes['PRIMARY']['column']);
 		$this->assertArrayHasKey('unique', $indexes['PRIMARY']);
-		$this->assertEqual(1, $indexes['PRIMARY']['unique']);
+		$this->assertEquals(1, $indexes['PRIMARY']['unique']);
 	}
 
 /**
@@ -673,7 +693,7 @@ class MigrationTest extends CakeTestCase {
 			))
 			->removeIndex('tests', 'PRIMARY');
 
-		$indexes = $this->db->index($this->db->fullTableName('tests'));
+		$indexes = $this->db->index($this->db->fullTableName('tests', false, false));
 		$this->assertArrayNotHasKey('PRIMARY', $indexes);
 	}
 
@@ -723,11 +743,11 @@ class MigrationTest extends CakeTestCase {
 		if (get_class($this->db) !== 'Postgres') {
 			$this->assertArrayNotHasKey('TITLE_UNIQUE', $newIndexes);
 			$this->assertArrayHasKey('SUBTITLE_UNIQUE', $newIndexes);
-			$this->assertEqual($oldIndexes['TITLE_UNIQUE'], $newIndexes['SUBTITLE_UNIQUE']);
+			$this->assertEquals($oldIndexes['TITLE_UNIQUE'], $newIndexes['SUBTITLE_UNIQUE']);
 		} else {
 			$this->assertArrayNotHasKey('title_unique', $newIndexes);
 			$this->assertArrayHasKey('subtitle_unique', $newIndexes);
-			$this->assertEqual($oldIndexes['title_unique'], $newIndexes['subtitle_unique']);
+			$this->assertEquals($oldIndexes['title_unique'], $newIndexes['subtitle_unique']);
 		}
 	}
 

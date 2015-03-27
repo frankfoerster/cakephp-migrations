@@ -1,9 +1,23 @@
 <?php
+/**
+ * Copyright (c) Frank Förster (http://frankfoerster.com)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Frank Förster (http://frankfoerster.com)
+ * @link          http://github.com/frankfoerster/cakephp-migrations
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
 
 App::uses('AppShell', 'Console/Command');
 App::uses('Migrations', 'Migrations.Lib');
 App::uses('SchemaMigration', 'Migrations.Model');
 
+/**
+ * Class MigrationShell
+ */
 class MigrationShell extends AppShell {
 
 	public $connection = 'default';
@@ -12,6 +26,9 @@ class MigrationShell extends AppShell {
 
 	protected $_migrationVersion;
 
+	/**
+	 * Main shell runner.
+	 */
 	public function main() {
 		$this->nl();
 		$this->out(__d('migration_shell', 'Welcome to CakePHP Migrations Shell v%s', $this->_getMigrationVersion()));
@@ -19,6 +36,9 @@ class MigrationShell extends AppShell {
 		$this->out($this->getOptionParser()->help());
 	}
 
+	/**
+	 * Startup callback
+	 */
 	public function startup() {
 		$task = Inflector::classify($this->command);
 		if (isset($this->{$task})) {
@@ -31,6 +51,11 @@ class MigrationShell extends AppShell {
 		}
 	}
 
+	/**
+	 * Defines and returns the option parse for this shell.
+	 *
+	 * @return ConsoleOptionParser
+	 */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 
@@ -76,6 +101,11 @@ class MigrationShell extends AppShell {
 		return $parser;
 	}
 
+	/**
+	 * The migrate command.
+	 *
+	 * @return bool
+	 */
 	public function migrate() {
 		$options = array(
 			'direction' => $this->args[0],
@@ -101,9 +131,15 @@ class MigrationShell extends AppShell {
 		$sm = ClassRegistry::init('Migrations.SchemaMigration');
 		$sm->setDataSource($this->params['connection']);
 		$this->out(__d('migration_shell', 'Current Migration version: %s', array($sm->getCurrentVersion($options['scope']))));
+		$migrations->clearCache();
 		return true;
 	}
 
+	/**
+	 * Determine the current migration version.
+	 *
+	 * @return mixed|string
+	 */
 	protected function _getMigrationVersion() {
 		if ($this->_migrationVersion === null) {
 			$versionFile = new File(CakePlugin::path('Migrations') . 'version.txt');

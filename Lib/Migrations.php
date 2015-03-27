@@ -1,4 +1,15 @@
 <?php
+/**
+ * Copyright (c) Frank Förster (http://frankfoerster.com)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Frank Förster (http://frankfoerster.com)
+ * @link          http://github.com/frankfoerster/cakephp-migrations
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
 
 App::uses('CakePlugin', 'Core');
 App::uses('ClassRegistry', 'Utility');
@@ -7,6 +18,9 @@ App::uses('Folder', 'Utility');
 App::uses('Inflector', 'Utility');
 App::uses('MigrationException', 'Migrations.Model/Exception');
 
+/**
+ * Class Migrations
+ */
 class Migrations {
 
 /**
@@ -130,6 +144,7 @@ class Migrations {
 		$db->begin();
 		try {
 			foreach ($migrationsToRun as $v => $m) {
+				echo 'Migrating to: ' . $v . "\n\n";
 				$migration = $this->_getMigrationInstance($m);
 				$migration->{$direction}();
 				$this->SchemaMigration->{$direction}($scope, $v, $m['className']);
@@ -155,9 +170,13 @@ class Migrations {
 		);
 		/** @var DboSource $db */
 		$db = ConnectionManager::getDataSource($this->connection);
+
+		$this->clearCache();
+
 		if (!in_array($db->fullTableName('schema_migrations', false, false), $db->listSources())) {
 			$options['forceAll'] = true;
 		}
+
 		$this->migrate($options);
 	}
 
@@ -284,7 +303,7 @@ class Migrations {
 		 */
 		extract($availableMigration);
 		if (!class_exists($className)) {
-			$file = $path . $fileName;
+			$file = $path . DS . $fileName;
 			if (!file_exists($file)) {
 				throw new MigrationException(__d('migration', 'File %s not found in path %s.', array(
 					$fileName,
@@ -304,6 +323,32 @@ class Migrations {
 		return new $className(array(
 			'connection' => $this->connection
 		));
+	}
+
+	/**
+	 * Clear all possible caches.
+	 */
+	public function clearCache() {
+		Cache::clear();
+		clearCache();
+
+		$files = array();
+		$files = array_merge($files, glob(CACHE . '*'));
+		$files = array_merge($files, glob(CACHE . 'css' . DS . '*')); // remove cached css
+		$files = array_merge($files, glob(CACHE . 'js' . DS . '*'));  // remove cached js
+		$files = array_merge($files, glob(CACHE . 'models' . DS . '*'));  // remove cached models
+		$files = array_merge($files, glob(CACHE . 'persistent' . DS . '*'));  // remove cached persistent
+
+		foreach ($files as $f) {
+			if (is_file($f)) {
+				@@unlink($f);
+			}
+		}
+
+		if (function_exists('apc_clear_cache')) {
+			apc_clear_cache();
+			apc_clear_cache('user');
+		}
 	}
 
 }

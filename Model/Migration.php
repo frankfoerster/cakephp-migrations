@@ -1,16 +1,14 @@
 <?php
 /**
- *
- * PHP 5
+ * Copyright (c) Frank Förster (http://frankfoerster.com)
  *
  * Licensed under The MIT License
- * Redistributions of files must retain the below copyright notice.
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2013, Frank Förster (http://frankfoerster.com)
+ * @copyright     Copyright (c) Frank Förster (http://frankfoerster.com)
  * @link          http://github.com/frankfoerster/cakephp-migrations
- * @package       Migrations
- * @subpackage    Migrations.Model
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('CakeSchema', 'Model');
@@ -22,6 +20,9 @@ App::uses('MissingColumnException', 'Migrations.Model/Exception');
 App::uses('MissingIndexException', 'Migrations.Model/Exception');
 App::uses('TableAlreadyExistsException', 'Migrations.Model/Exception');
 
+/**
+ * Class Migration
+ */
 abstract class Migration extends Object implements MigrationInterface {
 
 /**
@@ -118,11 +119,13 @@ abstract class Migration extends Object implements MigrationInterface {
  */
 	public function renameTable($table, $newName) {
 		$sources = $this->_db->listSources();
-		if (!in_array($this->_db->fullTableName($table, false, false), $sources)) {
-			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $this->_db->fullTableName($table, false, false)));
+		$table = $this->_db->fullTableName($table, false, false);
+		if (!in_array($table, $sources)) {
+			throw new MissingTableException(__d('migration', 'Table "%s" does not exist in database.', $table));
 		}
-		if (in_array($this->_db->fullTableName($newName, false, false), $sources)) {
-			throw new TableAlreadyExistsException(__d('migration', 'Table "%s" already exists in database.', $this->_db->fullTableName($newName, false, false)));
+		$newName = $this->_db->fullTableName($newName, false, false);
+		if (in_array($newName, $sources)) {
+			throw new TableAlreadyExistsException(__d('migration', 'Table "%s" already exists in database.', $newName));
 		}
 		$sql = "ALTER TABLE {$table} RENAME TO {$newName};";
 		try {
@@ -368,6 +371,16 @@ abstract class Migration extends Object implements MigrationInterface {
 			throw new MigrationException(__d('migration', 'SQL Error: %s', $e->getMessage()));
 		}
 		return $this;
+	}
+
+	/**
+	 * Check if the provided $table exists.
+	 *
+	 * @param string $table
+	 * @return bool
+	 */
+	public function tableExists($table) {
+		return in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources());
 	}
 
 }

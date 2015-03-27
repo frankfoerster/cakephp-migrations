@@ -1,4 +1,15 @@
 <?php
+/**
+ * Copyright (c) Frank Förster (http://frankfoerster.com)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Frank Förster (http://frankfoerster.com)
+ * @link          http://github.com/frankfoerster/cakephp-migrations
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
 
 App::uses('CakeSchema', 'Model');
 App::uses('CakeTestCase', 'TestSuite');
@@ -51,7 +62,7 @@ class MigrationsTest extends CakeTestCase {
 		/** @var DboSource $db */
 		$db = ConnectionManager::getDataSource($this->connection);
 
-		$this->assertTrue(in_array('schema_migrations', $db->listSources()));
+		$this->assertTrue(in_array($db->fullTableName('schema_migrations', false, false), $db->listSources()));
 	}
 
 /**
@@ -69,36 +80,36 @@ class MigrationsTest extends CakeTestCase {
 			'scope' => 'TestPlugin',
 			'steps' => 1
 		));
-		$this->assertTrue(in_array('test_plugin_articles', $db->listSources()));
-		$this->assertEqual('00000000000001', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertTrue(in_array($db->fullTableName('test_plugin_articles', false, false), $db->listSources()));
+		$this->assertEquals('00000000000001', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'up',
 			'scope' => 'TestPlugin',
 			'steps' => 2
 		));
-		$this->assertEqual('00000000000003', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertEquals('00000000000003', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'down',
 			'scope' => 'TestPlugin',
 			'steps' => 1
 		));
-		$this->assertEqual('00000000000002', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertEquals('00000000000002', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'down',
 			'scope' => 'TestPlugin',
 			'steps' => 1
 		));
-		$this->assertEqual('00000000000001', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertEquals('00000000000001', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'up',
 			'scope' => 'TestPlugin',
 			'steps' => 2
 		));
-		$this->assertEqual('00000000000003', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertEquals('00000000000003', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'down',
@@ -111,7 +122,7 @@ class MigrationsTest extends CakeTestCase {
 			'direction' => 'up',
 			'scope' => 'TestPlugin'
 		));
-		$this->assertEqual('00000000000003', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertEquals('00000000000003', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'down',
@@ -123,14 +134,14 @@ class MigrationsTest extends CakeTestCase {
 			'direction' => 'up',
 			'scope' => 'TestPlugin'
 		));
-		$this->assertEqual('00000000000003', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertEquals('00000000000003', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'down',
 			'scope' => 'TestPlugin',
 			'steps' => 2
 		));
-		$this->assertEqual('00000000000001', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertEquals('00000000000001', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'down',
@@ -144,28 +155,28 @@ class MigrationsTest extends CakeTestCase {
 			'scope' => 'TestPlugin',
 			'version' => '00000000000002'
 		));
-		$this->assertEqual('00000000000002', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertEquals('00000000000002', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'down',
 			'scope' => 'TestPlugin',
 			'version' => '00000000000001'
 		));
-		$this->assertEqual('00000000000001', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertEquals('00000000000001', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'up',
 			'scope' => 'TestPlugin',
 			'version' => '00000000000003'
 		));
-		$this->assertEqual('00000000000003', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertEquals('00000000000003', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'down',
 			'scope' => 'TestPlugin',
 			'version' => '00000000000002'
 		));
-		$this->assertEqual('00000000000002', $sm->getCurrentVersion('TestPlugin'));
+		$this->assertEquals('00000000000002', $sm->getCurrentVersion('TestPlugin'));
 
 		$this->Migrations->migrate(array(
 			'direction' => 'down',
