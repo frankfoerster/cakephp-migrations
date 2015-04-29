@@ -19,37 +19,37 @@ App::uses('Migration', 'Migrations.Model');
  */
 class TestMigration extends Migration {
 
-	/**
-	 * @var string
-	 */
+/**
+ * @var string
+ */
 	public $connection = 'test';
 
-	/**
-	 * Migrate up
-	 */
+/**
+ * Migrate up
+ */
 	public function up() {
 	}
 
-	/**
-	 * Migrate down
-	 */
+/**
+ * Migrate down
+ */
 	public function down() {
 	}
 
-	/**
-	 * Get the configured DataSource/DboSource.
-	 *
-	 * @return DataSource|DboSource
-	 */
+/**
+ * Get the configured DataSource/DboSource.
+ *
+ * @return DataSource|DboSource
+ */
 	public function getDb() {
 		return $this->_db;
 	}
 
-	/**
-	 * Get the current Schema instance.
-	 *
-	 * @return CakeSchema
-	 */
+/**
+ * Get the current Schema instance.
+ *
+ * @return CakeSchema
+ */
 	public function getSchema() {
 		return $this->_schema;
 	}
@@ -798,5 +798,4 @@ class MigrationTest extends CakeTestCase {
 			))
 			->renameIndex('tests', 'TITLE_UNIQUE', 'SUBTITLE_UNIQUE');
 	}
-
 }

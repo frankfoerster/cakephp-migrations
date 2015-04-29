@@ -325,9 +325,9 @@ class Migrations {
 		));
 	}
 
-	/**
-	 * Clear all possible caches.
-	 */
+/**
+ * Clear all possible caches.
+ */
 	public function clearCache() {
 		Cache::clear();
 		clearCache();
@@ -335,9 +335,9 @@ class Migrations {
 		$files = array();
 		$files = array_merge($files, glob(CACHE . '*'));
 		$files = array_merge($files, glob(CACHE . 'css' . DS . '*')); // remove cached css
-		$files = array_merge($files, glob(CACHE . 'js' . DS . '*'));  // remove cached js
-		$files = array_merge($files, glob(CACHE . 'models' . DS . '*'));  // remove cached models
-		$files = array_merge($files, glob(CACHE . 'persistent' . DS . '*'));  // remove cached persistent
+		$files = array_merge($files, glob(CACHE . 'js' . DS . '*')); // remove cached js
+		$files = array_merge($files, glob(CACHE . 'models' . DS . '*')); // remove cached models
+		$files = array_merge($files, glob(CACHE . 'persistent' . DS . '*')); // remove cached persistent
 
 		foreach ($files as $f) {
 			if (is_file($f)) {

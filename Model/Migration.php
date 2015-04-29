@@ -373,12 +373,12 @@ abstract class Migration extends Object implements MigrationInterface {
 		return $this;
 	}
 
-	/**
-	 * Check if the provided $table exists.
-	 *
-	 * @param string $table
-	 * @return bool
-	 */
+/**
+ * Check if the provided $table exists.
+ *
+ * @param string $table
+ * @return bool
+ */
 	public function tableExists($table) {
 		return in_array($this->_db->fullTableName($table, false, false), $this->_db->listSources());
 	}
