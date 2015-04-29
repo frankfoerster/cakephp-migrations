@@ -11,7 +11,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-class AllMigrationsTestsTest extends PHPUnit_Framework_TestSuite {
+class AllMigrationsTest extends PHPUnit_Framework_TestSuite {
 
 	/**
 	 * Test suite caller to run all Migration tests.
@@ -19,7 +19,7 @@ class AllMigrationsTestsTest extends PHPUnit_Framework_TestSuite {
 	 * @return CakeTestSuite
 	 */
 	public static function suite() {
-		$suite = new CakeTestSuite('All Migration Tests');
+		$suite = new CakeTestSuite('All Migrations Tests');
 
 		$path = dirname(__FILE__) . DS;
 		$suite->addTestDirectoryRecursive($path);
