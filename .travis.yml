@@ -1,24 +1,15 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
-  - 5.5
-  - 5.6
 
 env:
   global:
     - PLUGIN_NAME=Migrations
     - REQUIRE=""
   matrix:
-    - DB=mysql CAKE_VERSION=2.3.10
-    - DB=pgsql CAKE_VERSION=2.3.10
-    - DB=mysql CAKE_VERSION=2.4.10
-    - DB=pgsql CAKE_VERSION=2.4.10
-    - DB=mysql CAKE_VERSION=2.5.8
-    - DB=pgsql CAKE_VERSION=2.5.8
-    - DB=mysql CAKE_VERSION=2.6.4
-    - DB=pgsql CAKE_VERSION=2.6.4
+    - DB=mysql CAKE_VERSION=2.6
+    - DB=pgsql CAKE_VERSION=2.6
 
 matrix:
   include:
