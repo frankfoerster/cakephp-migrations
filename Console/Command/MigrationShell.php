@@ -93,9 +93,6 @@ class MigrationShell extends AppShell {
 						)
 					)
 				)
-			))
-			->addSubCommand('generate', array(
-				'help' => __d('migration_shell', 'Generate a new migration.')
 			));
 
 		return $parser;
