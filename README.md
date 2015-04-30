@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/frankfoerster/cakephp-migrations/master.svg?style=flat-square)](https://travis-ci.org/frankfoerster/cakephp-migrations.png?branch=master)
+[![Build Status](https://travis-ci.org/frankfoerster/cakephp-migrations.png?branch=master)](https://travis-ci.org/frankfoerster/cakephp-migrations)
 
 # Migrations Plugin for CakePHP 2.3+
 
